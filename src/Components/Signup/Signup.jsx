@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState,useContext } from 'react';
 import {useNavigate} from 'react-router-dom'
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword,updateProfile } from "firebase/auth";
 import Logo from '../../assets/olx-logo.png';
 import './Signup.css';
 import { FirebaseContext } from '../../store/Context';
-import {doc, setDoc, addDoc, collection} from "firebase/firestore"
+import { addDoc, collection} from "firebase/firestore"
 
 
 export default function Signup() {
@@ -21,8 +21,10 @@ export default function Signup() {
       createUserWithEmailAndPassword(auth,email,password)
       .then((userCredential)=>{
         const user = userCredential.user;
-        user.displayName = name     
-        console.log(user.uid,user.displayName) 
+        console.log(user.uid,user.displayName) ;
+        return updateProfile(user, {
+          displayName: name
+        });    
 
       } ).then(()=>{
         addDoc(collection(db,'users'),{
@@ -33,7 +35,6 @@ export default function Signup() {
 
       }).then(()=>{
         navigate('/login')
-        console.log('hhhh')
 
       }).catch((err)=>{
         console.log(err);

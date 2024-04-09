@@ -7,16 +7,31 @@ import Arrow from '../../assets/Arrow';
 import SellButton from '../../assets/SellButton';
 import SellButtonPlus from '../../assets/SellButtonPlus';
 import  { AuthContext } from '../../store/Context';
-
+import { getAuth, signOut } from 'firebase/auth';
+import { Link } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom'
 
 const NavBar = () => {
+  const loginStyle = {color:'black'}
   const {user,setUser} = useContext(AuthContext) 
+  const navigate = useNavigate()
+  const logout = ()=>{
+    const auth = getAuth();
+    signOut(auth).then(() => {
+    console.log(user,user?.displayName,'logget out');
+    navigate('/login')
+    }).catch((error) => {
+
+    });
+  }
   return (
     <div className="maindiv">
     <div className="navbar">
+      <Link to={'/'}>
       <div className="olxlogo">
         <OlxLogo></OlxLogo>
       </div>
+      </Link>
       <div className="placeSearch">
         <Search></Search>
         <input type="text" />
@@ -38,11 +53,11 @@ const NavBar = () => {
         <Arrow></Arrow>
       </div>
       <div className="loginPage">
-        <span>{ user? user:"Login" }</span>
+        <span style={{textTransform:'capitalize'}}>{ user? user.displayName:<Link to={'/login'} style={loginStyle}>LOGIN</Link> }</span>
         <hr />
       </div>
-      <span>{ user?"Logout": '' }</span>
-
+      <span onClick={logout} >{ user?"Logout": '' }</span>
+      <Link to={'/add'}>
       <div className="sellMenu">
         <SellButton></SellButton>
         <div className="sellMenuContent">
@@ -50,6 +65,7 @@ const NavBar = () => {
           <span>SELL</span>
         </div>
       </div>
+      </Link>
     </div>
   </div>
   )

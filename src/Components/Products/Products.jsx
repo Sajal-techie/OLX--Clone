@@ -1,8 +1,26 @@
-import React from 'react'
+import React, { useEffect,useContext, useState } from 'react'
 import './Products.css'
 import Heart from '../../assets/Heart';
+import { AuthContext, FirebaseContext } from '../../store/Context';
+import { collection, getDocs } from 'firebase/firestore';
 
 const Products = () => {
+  const {db} = useContext(FirebaseContext)
+  const [product,setProduct] = useState([])
+  useEffect( () =>{
+    const collectionRef  = collection(db,'products') 
+      getDocs(collectionRef).then((snapshot)=>{
+      const allProducts =  snapshot.docs.map((obj)=>{
+        return {
+          ...obj.data(),
+          id:obj.id
+        }
+
+      }) 
+      setProduct(allProducts)
+    })
+  },[])
+  console.log(product ,'ssss');
   return (
     <div className="postParentDiv">
     <div className="moreView">

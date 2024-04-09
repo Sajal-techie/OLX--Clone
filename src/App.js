@@ -6,17 +6,24 @@ import LoginPage from './Containers/LoginPage';
 import { AuthContext } from './store/Context';
 import { useContext, useEffect } from 'react';
 import { getAuth,onAuthStateChanged } from 'firebase/auth';
+import AddProductPage from './Containers/AddProductPage';
 
 function App() {
-  const {user,setUser} = useContext(AuthContext)
+  const {setUser} = useContext(AuthContext)
   const auth = getAuth()
     useEffect(() => {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user); 
+      let unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (user) {
+          setUser(user); 
+          console.log(user.displayName,user,'apphai') 
+        }else{
+          setUser(null)
+          console.log('app,debug');
+        }
     });
 
-    return () => unsubscribe();
-  }, [auth]);
+    return () => {if (unsubscribe) unsubscribe();}
+  }, []);
   return (
     <div className="App">
       <Router>
@@ -24,6 +31,7 @@ function App() {
           <Route path='/' element={<Home/>} />
           <Route path='/signup' element={<SignupPage/>} />
           <Route path='/login' element={<LoginPage/>} />
+          <Route path='/add' element={<AddProductPage/>}/>
         </Routes>
       </Router>  
      
