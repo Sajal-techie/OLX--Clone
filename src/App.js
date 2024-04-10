@@ -7,9 +7,11 @@ import { AuthContext } from './store/Context';
 import { useContext, useEffect } from 'react';
 import { getAuth,onAuthStateChanged } from 'firebase/auth';
 import AddProductPage from './Containers/AddProductPage';
-
+import ProductViewPage from './Containers/ProductViewPage';
+import Product from './store/ProductContext';
 function App() {
   const {setUser} = useContext(AuthContext)
+
   const auth = getAuth()
     useEffect(() => {
       let unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -26,14 +28,18 @@ function App() {
   }, []);
   return (
     <div className="App">
+
+    <Product>
       <Router>
         <Routes>
           <Route path='/' element={<Home/>} />
           <Route path='/signup' element={<SignupPage/>} />
           <Route path='/login' element={<LoginPage/>} />
           <Route path='/add' element={<AddProductPage/>}/>
+          <Route path='/viewproduct' element={<ProductViewPage/>}/>
         </Routes>
       </Router>  
+    </Product>
      
     </div>
   );

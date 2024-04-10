@@ -3,7 +3,7 @@ import './AddProduct.css'
 import '../NavBar/NavBar'
 import { AuthContext,FirebaseContext } from '../../store/Context'
 import { storage } from '../../firebase/config'
-import {ref,uploadBytes} from 'firebase/storage'
+import {getDownloadURL, ref,uploadBytes} from 'firebase/storage'
 import { collection,addDoc } from 'firebase/firestore'
 import {useNavigate} from 'react-router-dom'
 
@@ -14,29 +14,30 @@ const AddProduct = () => {
   const [category,setCategory] = useState('')
   const [price,setPrice] = useState('')
   const [image,setImage] = useState(null)
+  const [imgUrl,setImgurl] = useState(null)
   const navigate = useNavigate()
-  const dates = new Date()
+  const dates = new Date(Date.now())
   const handleSubmit = (e)=>{
     e.preventDefault();
     if (image) {
       const storageRef = ref(storage,`/images/${image.name}`)
       uploadBytes(storageRef, image).then((url) => {
-        addDoc(collection(db,'products' ),{
+        getDownloadURL(storageRef).then((url)=>{
+          addDoc(collection(db,'products' ),{
           name,
           category,
           price,
-          url:url.ref.fullPath,
+          url,
           userId: user.uid ,
-          createdAt: dates.toISOString(), 
+          createdAt: dates.toISOString().split('T')[0], 
         })
-        console.log('File uploaded successfully!',url.ref.fullPath,user.uid);
+        })
         navigate('/')
       }).catch(err=>console.log(err))
     }
     else{
       console.log('fill every fields');
     }
-    
   }
   return (
     <>

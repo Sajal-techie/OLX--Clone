@@ -3,11 +3,16 @@ import './Products.css'
 import Heart from '../../assets/Heart';
 import { AuthContext, FirebaseContext } from '../../store/Context';
 import { collection, getDocs } from 'firebase/firestore';
+import { Link } from 'react-router-dom';
+import { ProductContext } from '../../store/ProductContext';
+import {useNavigate} from 'react-router-dom'
 
 const Products = () => {
   const {db} = useContext(FirebaseContext)
-  const [product,setProduct] = useState([])
-  useEffect( () =>{
+  const [products,setProduct] = useState([])
+  const {setProductDetails} = useContext(ProductContext)
+  const navigate = useNavigate()
+  useEffect( () =>{ 
     const collectionRef  = collection(db,'products') 
       getDocs(collectionRef).then((snapshot)=>{
       const allProducts =  snapshot.docs.map((obj)=>{
@@ -15,12 +20,16 @@ const Products = () => {
           ...obj.data(),
           id:obj.id
         }
-
       }) 
       setProduct(allProducts)
     })
-  },[])
-  console.log(product ,'ssss');
+  },[db])
+  const handleClick = (product)=>{
+            console.log(product,'product');
+            setProductDetails(product);
+            navigate('/viewproduct')
+  }
+  console.log(products ,'ssss');
   return (
     <div className="postParentDiv">
     <div className="moreView">
@@ -29,24 +38,29 @@ const Products = () => {
         <span>View more</span>
       </div>
       <div className="cards">
+        {
+            products.map((product)=>(
         <div
           className="card"
+          onClick={()=>handleClick(product)}
         >
           <div className="favorite">
             <Heart></Heart>
           </div>
           <div className="image">
-            <img src="../../../Images/R15V3.jpg" alt="" />
+            <img src={product.url} alt="dsfas" />
           </div>
           <div className="content">
-            <p className="rate">&#x20B9; 250000</p>
-            <span className="kilometer">Two Wheeler</span>
-            <p className="name"> YAMAHA R15V3</p>
+            <p className="rate">&#x20B9; {product.price}</p>
+            <span className="kilometer">{product.category}</span>
+            <p className="name"> {product.name} </p>
           </div>
           <div className="date">
-            <span>Tue May 04 2021</span>
+            <span>{product.createdAt}</span>
           </div>
         </div>
+            ))
+        }
       </div>
     </div>
     <div className="recommendations">
