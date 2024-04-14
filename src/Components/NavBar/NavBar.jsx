@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 
 import './NavBar.css';
 import OlxLogo from '../../assets/OlxLogo';
@@ -13,12 +13,13 @@ import {useNavigate} from 'react-router-dom'
 
 const NavBar = () => {
   const loginStyle = {color:'black'}
-  const {user,setUser} = useContext(AuthContext) 
+  const {user} = useContext(AuthContext) 
+  const [search,setSearch] = useState(null)
   const navigate = useNavigate()
   const logout = ()=>{
     const auth = getAuth();
     signOut(auth).then(() => {
-    console.log(user,user?.displayName,'logget out');
+    console.log(user?.displayName,'logget out');
     navigate('/login')
     }).catch((error) => {
 
@@ -34,7 +35,8 @@ const NavBar = () => {
       </Link>
       <div className="placeSearch">
         <Search></Search>
-        <input type="text" />
+        <input type="text"
+        placeholder='Location' />
         <Arrow></Arrow>
       </div>
       <div className="productSearch">
@@ -57,7 +59,7 @@ const NavBar = () => {
         <hr />
       </div>
       <span onClick={logout} >{ user?"Logout": '' }</span>
-      <Link to={'/add'}>
+      { user && <Link to={'/add'}>
       <div className="sellMenu">
         <SellButton></SellButton>
         <div className="sellMenuContent">
@@ -65,7 +67,8 @@ const NavBar = () => {
           <span>SELL</span>
         </div>
       </div>
-      </Link>
+      </Link>}
+      
     </div>
   </div>
   )

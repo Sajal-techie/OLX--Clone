@@ -4,6 +4,8 @@ import { ProductContext } from '../../store/ProductContext';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { FirebaseContext } from '../../store/Context';
 import {useNavigate} from 'react-router-dom'
+import ReactLoading from 'react-loading'
+
 
 function ViewProduct() {
     const [userDetails, setUserDetails] = useState(null)
@@ -29,7 +31,12 @@ function ViewProduct() {
     },[productDetails,db])
   return (
     <div className="viewParentDiv">
-        {loading? <h1>loading</h1>: 
+        {loading? <div className='loading-container'><ReactLoading  className='loading-wrapper'
+                type="spinningBubbles"
+                color="blue"
+                height={100}
+                width={70}
+            /></div>: 
         <>
       <div className="imageShowDiv">
         <img
